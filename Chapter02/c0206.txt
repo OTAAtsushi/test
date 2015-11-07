@@ -1,0 +1,100 @@
+package com.hypermotion2d;
+
+import android.content.Context;
+import android.opengl.GLSurfaceView;
+import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.opengles.GL10;
+import com.roxiga.hypermotion2d.*;
+
+public class HyperMotion2D implements GLSurfaceView.Renderer
+{
+	//コンテクスト
+	private Context _context;
+	//画面幅
+	public int _width;
+	//画面高さ
+	public int _height;
+	//画面をタッチしたか？
+	public boolean _touch;
+	//①男の子の幅	
+    private static final int BOY_WIDTH = 128;
+	//スプライト
+	private Sprite2D _boy = new Sprite2D(); 
+	//②テクスチャのX座標
+    private float _texX;
+
+	//@Override
+	//コンストラクタ
+	public HyperMotion2D(Context context)
+	{
+	    _context = context;
+	}
+
+	//@Override
+	//描画できるように毎フレーム呼び出される関数
+	public void onDrawFrame(GL10 gl)
+	{
+	    // 描画用バッファをクリア
+	    gl.glClear(GL10.GL_COLOR_BUFFER_BIT
+	    		| GL10.GL_DEPTH_BUFFER_BIT);
+
+	    //③boy.pngでのX位置
+        _boy._texX = BOY_WIDTH*(int)_texX;
+		//④アニメーション
+        _texX += 0.2f;
+        //⑤ポーズを最初のものに
+        if ( _texX >= 8 )
+        {
+        	_texX = 0;
+        }
+	    _boy.draw(gl);
+	}
+	
+	//@Override
+	//サーフェイスのサイズ変更時に呼ばれる
+	public void onSurfaceChanged(
+			GL10 gl, int width, int height)
+	{
+	}
+
+	//@Override
+	//サーフェイスが生成される際・または再生成される際に呼ばれる
+	public void onSurfaceCreated(
+			 GL10 gl, EGLConfig config)
+	{
+		//背景色
+	   	gl.glClearColor(0.6f,0.8f,1.0f,1.0f);
+	    // ディザを無効化
+	    gl.glDisable(GL10.GL_DITHER);
+	    // 深度テストを有効に
+	    gl.glEnable(GL10.GL_DEPTH_TEST);
+	 	//テクスチャ機能ON
+	  	gl.glEnable(GL10.GL_TEXTURE_2D);
+	    //透明可能に
+	  	gl.glEnable(GL10.GL_ALPHA_TEST);
+	   	//ブレンド可能に
+	   	gl.glEnable(GL10.GL_BLEND);
+	  	//色のブレンド方法
+	  	gl.glBlendFunc(GL10.GL_SRC_ALPHA,
+			GL10.GL_ONE_MINUS_SRC_ALPHA);
+        //テクスチャ読み込み
+  		_boy.setTexture(gl,_context.getResources(),R.drawable.boy);  	
+        //⑥テクスチャの幅
+		_boy._texWidth = BOY_WIDTH;
+       	//⑦描画する幅
+		_boy._width = BOY_WIDTH;
+	}
+	
+	public void actionDown(float x,float y)
+	{
+	}
+	
+	public void actionMove(float x,float y)
+	{
+	}
+
+	public void actionUp(float x,float y)
+	{
+	}
+}
+

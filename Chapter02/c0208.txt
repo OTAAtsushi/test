@@ -1,0 +1,89 @@
+package com.hypermotion2d;
+
+import android.content.Context;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.SoundPool;
+import android.opengl.GLSurfaceView;
+import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.opengles.GL10;
+import com.roxiga.hypermotion2d.*;
+
+public class HyperMotion2D implements GLSurfaceView.Renderer
+{
+	//コンテクスト
+	private Context _context;
+	//画面幅
+	public int _width;
+	//画面高さ
+	public int _height;
+	//画面をタッチしたか？
+	public boolean _touch;
+	//①サウンドプール
+	private static SoundPool _sPool;
+	//②サウンド1のID
+	private int _soundID;
+
+	//@Override
+	//コンストラクタ
+	public HyperMotion2D(Context context)
+	{
+	    _context = context;
+	    //③サウンドプールの作成
+	    _sPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
+	    //④サウンド設定
+	    _soundID = _sPool.load(context, R.raw.right, 1);
+	}
+
+	//@Override
+	//描画できるように毎フレーム呼び出される関数
+	public void onDrawFrame(GL10 gl)
+	{
+	    // 描画用バッファをクリア
+	    gl.glClear(GL10.GL_COLOR_BUFFER_BIT
+	    		| GL10.GL_DEPTH_BUFFER_BIT);
+	}
+	
+	//@Override
+	//サーフェイスのサイズ変更時に呼ばれる
+	public void onSurfaceChanged(
+			GL10 gl, int width, int height)
+	{
+	}
+
+	//@Override
+	//サーフェイスが生成される際・または再生成される際に呼ばれる
+	public void onSurfaceCreated(
+			 GL10 gl, EGLConfig config)
+	{
+		//背景色
+	   	gl.glClearColor(0.6f,0.8f,1.0f,1.0f);
+	    // ディザを無効化
+	    gl.glDisable(GL10.GL_DITHER);
+	    // 深度テストを有効に
+	    gl.glEnable(GL10.GL_DEPTH_TEST);
+	 	//テクスチャ機能ON
+	  	gl.glEnable(GL10.GL_TEXTURE_2D);
+	    //透明可能に
+	  	gl.glEnable(GL10.GL_ALPHA_TEST);
+	   	//ブレンド可能に
+	   	gl.glEnable(GL10.GL_BLEND);
+	  	//色のブレンド方法
+	  	gl.glBlendFunc(GL10.GL_SRC_ALPHA,
+			GL10.GL_ONE_MINUS_SRC_ALPHA);
+	}
+	
+	public void actionDown(float x,float y)
+	{
+		//⑤再生
+	    _sPool.play(_soundID, 1.0F, 1.0F, 0, 0, 1.0F);
+	}
+	
+	public void actionMove(float x,float y)
+	{
+	}
+
+	public void actionUp(float x,float y)
+	{
+	}
+}
